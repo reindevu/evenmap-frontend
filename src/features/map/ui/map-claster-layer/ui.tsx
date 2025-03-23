@@ -6,7 +6,7 @@ import "leaflet.markercluster";
 import { useMap } from "react-leaflet";
 
 import { Field } from "@headlessui/react";
-import { Label, getSelectSingleValue } from "@/shared/ui";
+
 import {
   EVENT_TYPE_MNEMOCODE_CHILDREN_MATINEE,
   EVENT_TYPE_MNEMOCODE_FURNITURE,
@@ -17,6 +17,7 @@ import ReactDOM from "react-dom/client";
 
 import furnitureDisplayImg from "@/shared/assets/furniture_display.svg";
 import childrenMatineeImg from "@/shared/assets/children_matinee.svg";
+import { Label, getSelectSingleValue } from "@reindevu/shared-ui";
 
 type Props = {
   eventList: EventListDefaultResponse;

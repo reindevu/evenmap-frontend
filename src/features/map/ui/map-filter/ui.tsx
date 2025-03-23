@@ -7,7 +7,7 @@ import {
   SelectLabel,
   SelectOption,
   getSelectSingleValue,
-} from "@/shared/ui";
+} from "@reindevu/shared-ui";
 import { FC, useState } from "react";
 
 export const MapFilter: FC = () => {
