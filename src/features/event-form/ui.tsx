@@ -1,14 +1,3 @@
-import {
-  Button,
-  FormError,
-  Input,
-  Label,
-  Select,
-  SelectLabel,
-  SelectOption,
-  Textarea,
-  getSelectSingleValue,
-} from "@/shared/ui";
 import { Field } from "@headlessui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
@@ -16,7 +5,17 @@ import { defaultValues, schema } from "./model";
 import { FC } from "react";
 import { EVENT_TYPE_MNEMOCODE_LIST_KEY_VALUE } from "@/shared/config/constants";
 import { jsonRpcApi } from "@/shared/jsonrpc";
-
+import {
+  Textarea,
+  Button,
+  FormError,
+  Input,
+  Label,
+  Select,
+  SelectLabel,
+  SelectOption,
+  getSelectSingleValue,
+} from "@reindevu/shared-ui";
 type Props = {
   latLng: [number, number];
 };

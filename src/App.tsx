@@ -4,7 +4,6 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "leaflet.markercluster";
 
-import { Drawer } from "./shared/ui";
 import { EventForm } from "./features/event-form";
 import { jsonRpcApi } from "./shared/jsonrpc";
 import { MapFilter } from "./features/map/ui/map-filter/ui";
@@ -17,6 +16,7 @@ import {
   MapClickHandler,
   MapClusterLayer,
 } from "./features/map";
+import { Drawer } from "@reindevu/shared-ui";
 
 type DrawerEventType = {
   isOpen: boolean;
