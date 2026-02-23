@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { useMapEvents } from "react-leaflet";
+import L from "leaflet";
 
 type Props = {
   onClick: (latLng: L.LatLng) => void;

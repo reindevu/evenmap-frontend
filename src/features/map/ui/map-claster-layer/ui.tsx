@@ -5,7 +5,7 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import { useMap } from "react-leaflet";
 
-import { Field } from "@headlessui/react";
+import { Field, Label } from "@headlessui/react";
 
 import {
   EVENT_TYPE_MNEMOCODE_CHILDREN_MATINEE,
@@ -17,7 +17,6 @@ import ReactDOM from "react-dom/client";
 
 import furnitureDisplayImg from "@/shared/assets/furniture_display.svg";
 import childrenMatineeImg from "@/shared/assets/children_matinee.svg";
-import { Label, getSelectSingleValue } from "@reindevu/shared-ui";
 
 type Props = {
   eventList: EventListDefaultResponse;
@@ -77,12 +76,7 @@ export const MapClusterLayerPopup: FC<MapClusterLayerPopupProps> = ({
           <Label className="text-xs">Тип</Label>
 
           <p className="text-sm font-medium">
-            {
-              getSelectSingleValue(
-                key.typeMnemocode,
-                EVENT_TYPE_MNEMOCODE_LIST_KEY_VALUE
-              )?.name
-            }
+            {getEventTypeName(key.typeMnemocode)}
           </p>
         </Field>
       </div>
@@ -139,3 +133,7 @@ const getMarkerIcon = (typeMnemocode: string) => {
 
   return undefined;
 };
+
+const getEventTypeName = (typeMnemocode: string) =>
+  EVENT_TYPE_MNEMOCODE_LIST_KEY_VALUE.find((item) => item.id === typeMnemocode)
+    ?.name ?? typeMnemocode;

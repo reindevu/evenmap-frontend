@@ -1,54 +1,49 @@
-# React + TypeScript + Vite
+# AgroMap Plot Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для работы с сельхоз-участками на карте: выделение полигонов полей, фиксация контрольных точек внутри участка и ведение коротких заметок по каждой точке.
 
-Currently, two official plugins are available:
+## Для чего проект
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Проект помогает аграриям и полевым командам:
+- отмечать границы участков;
+- сохранять точки наблюдений внутри поля;
+- подписывать точки (например: «урожай созрел», «нужно полить», «проверить вредителей»);
+- быстро возвращаться к нужному участку и точке через список.
 
-## Expanding the ESLint configuration
+## Основные возможности
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Рисование полигона по точкам с замыканием контура.
+- Локальное сохранение участков (`name`, `description`, геометрия).
+- Добавление точек внутри полигона с отдельными `name` и `description`.
+- Редактирование точки по клику.
+- Редактирование полигона по двойному клику (включая удаление).
+- Боковая панель со списком всех участков и их точек.
+- Фокус карты на полигон или конкретную точку.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Технологии
+
+- React + TypeScript
+- Vite
+- Leaflet + react-leaflet
+- Redux Toolkit Query (для загрузки событий на карту)
+- Tailwind CSS
+
+## Запуск
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Сборка production:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+pnpm build
+pnpm preview
 ```
+
+## Статус данных
+
+Сейчас полигоны и точки сохраняются локально в состоянии приложения (in-memory).  
+Следующий логичный шаг: подключить backend/БД для постоянного хранения данных по полям.
+

@@ -1,81 +1,93 @@
-import { useState } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import "leaflet.markercluster";
-
-import { EventForm } from "./features/event-form";
-import { jsonRpcApi } from "./shared/jsonrpc";
-import { MapFilter } from "./features/map/ui/map-filter/ui";
-
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-markercluster/styles";
-import { useMapStore } from "./entities/map/model";
-import {
-  MapChangeBounds,
-  MapClickHandler,
-  MapClusterLayer,
-} from "./features/map";
-import { Drawer } from "@reindevu/shared-ui";
 
-type DrawerEventType = {
-  isOpen: boolean;
-  data: {
-    latLng: [number, number];
-  };
-};
+import { useState } from "react";
+
+import { jsonRpcApi } from "./shared/jsonrpc";
+import { usePlotEditor } from "./features/plot-editor/model/use-plot-editor";
+import { PlotControls } from "./widgets/plot-controls";
+import { PlotSidebar } from "./widgets/plot-sidebar";
+import { PlotDialogs } from "./widgets/plot-dialogs";
+import { MapScene } from "./widgets/map-scene";
+
 function App() {
-  const [drawerEvent, setDrawerEvent] = useState<DrawerEventType>({
-    isOpen: false,
-    data: {
-      latLng: [0, 0],
-    },
-  });
-
-  const [viewBound, setViewBound] =
-    useState<Record<"sw" | "ne", [number, number]>>();
-
-  const { filter } = useMapStore();
+  const [viewBound, setViewBound] = useState<Record<"sw" | "ne", [number, number]>>();
 
   const { data: eventList = [] } = jsonRpcApi.useEventListDefaultQuery(
     {
       sw: viewBound?.sw ?? [],
       ne: viewBound?.ne ?? [],
-      ...filter,
     },
     { skip: !viewBound, refetchOnMountOrArgChange: true }
   );
 
-  const handleMapClick = (latlng: L.LatLng) => {
-    const latLng: [number, number] = [latlng.lat, latlng.lng];
-    setDrawerEvent({ isOpen: true, data: { latLng: latLng } });
-  };
+  const { state, actions } = usePlotEditor();
 
   return (
-    <div className="w-full h-full">
-      <MapFilter />
+    <div className="w-full h-full relative">
+      <PlotControls
+        isDrawMode={state.isDrawMode}
+        isDraftPolygonClosed={state.isDraftPolygonClosed}
+        hasSavedPolygons={state.savedPolygons.length > 0}
+        onStartDraw={actions.startDraw}
+        onCancelDraw={actions.cancelDraw}
+        onOpenSavePlot={() => actions.setPlotDrawer({ isOpen: true })}
+        onClearAll={actions.clearAllPlots}
+      />
 
-      <MapContainer
-        center={[51.505, -0.09]}
-        zoom={13}
-        style={{ height: "100dvh", width: "100%" }}
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <PlotSidebar
+        plots={state.savedPolygons}
+        onSelectPlot={actions.setSelectedPlotId}
+        onFocusPolygon={actions.focusPolygon}
+        onFocusPoint={actions.focusPoint}
+      />
 
-        <MapClickHandler onClick={handleMapClick} />
+      <MapScene
+        eventList={eventList}
+        savedPolygons={state.savedPolygons}
+        selectedPlotId={state.selectedPlotId}
+        draftPolygonPoints={state.draftPolygonPoints}
+        draftInnerPoints={state.draftInnerPoints}
+        isDraftPolygonClosed={state.isDraftPolygonClosed}
+        onMapClick={actions.handleMapClick}
+        onChangeBounds={setViewBound}
+        onMapReady={actions.setMapInstance}
+        onSavedPolygonClick={actions.onSavedPolygonClick}
+        onSavedPolygonDoubleClick={actions.onSavedPolygonDoubleClick}
+        onSavedPointClick={actions.onSavedPointClick}
+      />
 
-        <MapChangeBounds onChangeBounds={setViewBound} />
-
-        <MapClusterLayer eventList={eventList} />
-      </MapContainer>
-
-      <Drawer
-        open={drawerEvent.isOpen}
-        header="Создания мероприятия"
-        onOpenChange={() => {}}
-      >
-        <EventForm latLng={drawerEvent.data.latLng} />
-      </Drawer>
+      <PlotDialogs
+        plotDrawer={state.plotDrawer}
+        pointDrawer={state.pointDrawer}
+        editPlotDrawer={state.editPlotDrawer}
+        draftPolygonPoints={state.draftPolygonPoints}
+        draftInnerPoints={state.draftInnerPoints}
+        plotName={state.plotName}
+        plotDescription={state.plotDescription}
+        pointName={state.pointName}
+        pointDescription={state.pointDescription}
+        editPlotName={state.editPlotName}
+        editPlotDescription={state.editPlotDescription}
+        onClosePlotDrawer={() => actions.setPlotDrawer({ isOpen: false })}
+        onClosePointDrawer={actions.closePointDrawer}
+        onCloseEditPlotDrawer={() => actions.setEditPlotDrawer({ isOpen: false, plotId: null })}
+        onSavePlot={actions.savePlot}
+        onSavePoint={actions.savePoint}
+        onSavePlotEdit={actions.savePlotEdit}
+        onDeletePlot={actions.deletePlot}
+        setPlotName={actions.setPlotName}
+        setPlotDescription={actions.setPlotDescription}
+        setPointName={actions.setPointName}
+        setPointDescription={actions.setPointDescription}
+        setEditPlotName={actions.setEditPlotName}
+        setEditPlotDescription={actions.setEditPlotDescription}
+        canSavePlot={
+          state.isDraftPolygonClosed &&
+          Boolean(state.plotName.trim()) &&
+          Boolean(state.plotDescription.trim())
+        }
+      />
     </div>
   );
 }
